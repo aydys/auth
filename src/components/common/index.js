@@ -3,3 +3,4 @@ export * from './CardSection';
 export * from './Button';
 export * from './header';
 export * from './Input';
+export * from './Spinner';
