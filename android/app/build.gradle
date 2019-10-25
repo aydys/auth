@@ -179,6 +179,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-push-notification')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
@@ -188,6 +189,11 @@ dependencies {
         releaseImplementation files(hermesPath + "hermes-release.aar")
     } else {
         implementation jscFlavor
+    }
+
+    compile project(':react-native-push-notification')
+    compile ('com.google.android.gms:play-services-gcm:8.1.0') {
+        force = true;
     }
 }
 

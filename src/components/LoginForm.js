@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import { Text } from 'react-native';
-import firebase from 'firebase';
-import { Button, Card, CardSection, Input, Spinner } from './common';
+import { Text, StyleSheet, View } from 'react-native';
+import { Button, Card, CardSection, Input, Spinner, Header } from './common';
+
+import { Post } from '../libs/api';
 
 class LoginForm extends Component {
 	state = { 
@@ -16,14 +17,16 @@ class LoginForm extends Component {
 
 		this.setState({ error: '', loading: true });
 
-		firebase.auth().signInWithEmailAndPassword(email, password)
-			.then(this.onLoginSuccess.bind(this))
-				
-			.catch(() => {
-				firebase.auth().createUserWithEmailAndPassword(email, password)
-					.then(this.onLoginSuccess.bind(this))
-					.catch(this.onLoginFail.bind(this));
-			});
+		Post({
+			url: "auth/login",
+			params: {
+			login: this.state.email,
+			password: this.state.password
+			}
+		}).then((res) => {
+			this.props.navigation.navigate('Dashboard');
+			console.log(292, res)
+		})
 	}
 
 	onLoginFail() {
@@ -43,9 +46,9 @@ class LoginForm extends Component {
 	}
 
 	renderButton() {
-		if(this.state.loading) {
-			return <Spinner size='small' />
-		}
+		// if(this.state.loading) {
+		// 	return <Spinner size='small' />
+		// }
 
 		return (
 			<Button onPress={this.onButtonPress.bind(this)}>
@@ -56,44 +59,57 @@ class LoginForm extends Component {
 
 	render() {
     	return (
-    	  	<Card>
-				<CardSection>
-					<Input
-						placeholder="user@gmail.com"
-						autoCorrect={false}
-						label='Email'
-						value={this.state.email}
-						onChangeText={text => this.setState({ email: text })}
-					/>
-				</CardSection>
-				<CardSection>
-					<Input
-						secureTextEntry
-						placeholder="password"
-						label='Password'
-						value={this.state.password}
-						onChangeText={text => this.setState({ password: text })}
-					/>
-				</CardSection>
+			<View style={styles.container}>
+            	<Header 
+              		headerText={'Авторизация'}
+               	/>
+				<Card style={styles.cardStyle}>
+					<CardSection>
+						<Input
+							placeholder="user@gmail.com"
+							autoCorrect={false}
+							label='Email'
+							value={this.state.email}
+							onChangeText={text => this.setState({ email: text })}
+						/>
+					</CardSection>
+					<CardSection>
+						<Input
+							secureTextEntry
+							placeholder="password"
+							label='Password'
+							value={this.state.password}
+							onChangeText={text => this.setState({ password: text })}
+						/>
+					</CardSection>
 
-				<Text style={styles.errorTextStyle}>
-					{this.state.error}
-				</Text>
+					<Text style={styles.errorTextStyle}>
+						{this.state.error}
+					</Text>
 
-				<CardSection>
-					{ this.renderButton() }
-				</CardSection>
-			</Card>
+					<CardSection>
+						{ this.renderButton() }
+					</CardSection>
+				</Card>
+      		</View>
     	);
-  }
+  	}
 };
 
-const styles = {
+const styles = StyleSheet.create({
 	errorTextStyle: {
 		fontSize: 20,
 		alignSelf: 'center',
 		color: 'crimson'
-	}
-}
+	},
+	cardStyle: {
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	container: {
+		justifyContent: 'center',
+		height: '100%'
+	  }
+});
 
 export default LoginForm;
